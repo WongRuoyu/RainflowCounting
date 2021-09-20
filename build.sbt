@@ -1,4 +1,4 @@
-name := "RainflowCounting2"
+name := "RainflowCounting"
 
 version := "0.1"
 
