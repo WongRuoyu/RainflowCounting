@@ -1,7 +1,7 @@
 package com.wong
 package RainflowCounting.model
 
-sealed trait Reversal extends{self =>
+sealed trait Reversal {self =>
   def value:Double
 
   def name = "Reversal"
@@ -15,11 +15,26 @@ sealed trait Reversal extends{self =>
 
   def - (other:Reversal):Double = self.value - other.value
 
-  def quantified(levels:List[Level]): Reversal = ???
-}
-object Reversal {self =>
+  def isOnLowerBound(level:Level): Boolean = self.value == level.low
 
-  def toLevel(level: Level): Level = ???
+  def isOnHigherBound(level:Level): Boolean = self.value == level.high
+  
+  def isOnBoundary(level:Level): Boolean = self.isOnHigherBound(level) || self.isOnLowerBound(level)
+
+  def isInside(level:Level): Boolean = self.value > level.low && self.value < level.high
+
+  def isNotInside(level:Level): Boolean = !self.isInside(level) 
+  
+  def matchLevel(level:Level): Boolean = self match {
+      case p:Peak => self.isInside(level) || self.isOnLowerBound(level) 
+      case v:Valley => self.isInside(level) || self.isOnHigherBound(level) 
+  }
+
+  // def quantifiedBy(levels:List[Level]):Option[Reversal] = levels.filter(_.containReversal(p)).asReversal(p)
+
+}
+
+object Reversal {self =>
 
 
   type Temp = (List[Reversal],Double)

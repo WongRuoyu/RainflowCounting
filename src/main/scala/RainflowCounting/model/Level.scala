@@ -1,37 +1,47 @@
 package com.wong
 package RainflowCounting.model
 
-case class Level(low:Double,high:Double,value:Double){
+case class Level(low:Float,high:Float,value:Float){ self =>
 
-  def isAtLowerBound(x:Double) = x == low
+  def isOnLowerBound(r:Reversal) = r.value == low
 
-  def isAtHigherBound(x:Double) = x == high
+  def isOnHigherBound(r:Reversal) = r.value == high
 
-  def isInside(x:Double) = x > low && x < high
+  def isInside(r:Reversal) = r.value > low && r.value < high
 
-  def isNotInside(x:Double) = !this.isInside(x)
+  def isNotInside(r:Reversal) = !self.isInside(r)
 
-  def toLevel(reversal: Reversal):Level = reversal match {
-    case reversal: Peak if isAtHigherBound(reversal.value) => ???
-    case reversal: Valley if isAtLowerBound(reversal.value) => ???
-    case _ => this
+
+  def containReversal(reversal: Reversal): Boolean = reversal match {
+    case reversal: Peak => isInside(reversal) || isOnLowerBound(reversal)
+    case reversal: Valley => isInside(reversal) || isOnHigherBound(reversal)
   }
 
-  def next(next:Level):List[Level] = ???
+   def asReversal(reversal:Reversal): Reversal = reversal match {
+      case Peak(p) => Peak(self.value)
+      case Valley(v) => Valley(self.value)
+   }
 
-  override def equals(that: Any): Boolean = ???
+  // a single Level is not able to quaify a Reversal, so this method is impossible.
+ // def quatify(reversal:Reversal) : Reversal = if(containReversal(reversal)) self.value else
+
+  // def next(next:Level):List[Level] = ???
+
+  // override def equals(that: Any): Boolean = ???
 
 }
 
 object Level{
-  type Temp = Map[(Double,Double),Double]
+  type Temp = Map[(Float,Float),Float]
 
   def fromMap(maps:Temp):List[Level] = maps.map{
     case ((low,high),value) => Level(low,high,value)
   }.toList
 
-  def fromList(list:List[Double]):List[Level] = ???
+  def fromList(list:List[Float]):List[Level] = ???
+
 /*  implicit def toLevel(reversal: Reversal):Level = reversal match {
     case reversal:Peak if reversal.value
   }*/
+
 }
